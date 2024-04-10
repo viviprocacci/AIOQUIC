@@ -1,0 +1,32 @@
+Generate a Self-Signed Certificate
+
+First fill out the openssl.cnf file
+Template should be in the folder.
+You should only need to modify the IP address in two places.
+Get the IP using linux command "hostname -I"
+
+Generate the private key and the CSR:
+
+openssl req -new -nodes -out myserver.csr -newkey rsa:2048 -keyout myserver.key -config openssl.cnf
+
+Now you need to sign the CSR:
+
+openssl x509 -req -days 365 -in myserver.csr -signkey myserver.key -out myserver.crt -extensions req_ext -extfile openssl.cnf
+
+
+
+
+To start the server:  
+##Note that the path to the .crt and the .key are specified sperately
+##Remember to change them both if you want to use a different set of keys and certs
+
+python examples/http3_server.py --certificate fgcucerts/myserver.crt --private-key fgcucerts/myserver.key
+
+
+Client side command:
+##Make sure to change the IP to the IP signed in the certificates (the one the server should be on)
+
+python examples/http3_client.py --ca-certs /path/to/myserver.crt https://10.100.87.206:4433/
+
+//You will need to change the IP addresses
+
